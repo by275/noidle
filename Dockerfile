@@ -1,7 +1,8 @@
 ARG ALPINE_VER=3.23
+ARG GO_VERSION=1.26.4
 
 FROM alpine:${ALPINE_VER} AS alpine
-FROM golang:alpine${ALPINE_VER} AS golang
+FROM golang:${GO_VERSION}-alpine${ALPINE_VER} AS golang
 RUN go install github.com/by275/noidle@latest
 
 FROM alpine
