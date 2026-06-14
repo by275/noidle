@@ -13,29 +13,25 @@ Run it inside a `screen` session or another terminal multiplexer if you want it 
 2026/03/17 12:00:00 INFO  : Platform: linux, amd64, go1.25.0
 2026/03/17 12:00:00 INFO  : GitHub: https://github.com/by275/noidle
 2026/03/17 12:00:00 PRIOR : Use the worst priority by default.
-  -c duration
-        Interval for CPU waste
-  -cp float
-        Target CPU waste ratio between 0 and 1
-  -m int
-        GiB of memory waste
-  -n duration
-        Interval for network speed test
-  -p int
-        Set process priority value (default 666)
-  -t int
-        Set concurrent connections for network speed test (default 10)
 2026/03/17 12:00:00 MEM   : Reserving 2 GiB in the background until shutdown
-2026/03/17 12:00:00 CPU   : Maintaining background CPU occupancy with target ratio 0.15
-2026/03/17 12:00:00 NET   : Starting network speed testing with interval 4h0m0s
+2026/03/17 12:00:00 CPU   : Maintaining background CPU occupancy with target ratio 0.25
 2026/03/17 12:00:00 INFO  : noidle is running, press Ctrl+C to stop
 ```
 
 Command arguments:
 
 ```shell
-./noidle -cp 0.15 -m 2 -n 4h
+./noidle -cp 0.25 -m 2
 ```
+
+For OCI Always Free A1 instances, this is the recommended baseline:
+
+```shell
+./noidle -cp 0.25 -m 2
+```
+
+This targets about 25% CPU occupancy and reserves 2 GiB of memory.
+`-n` is not included because periodic bandwidth tests can create unnecessary traffic.
 
 Flags:
 
@@ -79,7 +75,7 @@ services:
       options:
         max-size: "1024k"
         max-file: "5"
-    command: "-cp 0.15 -m 2 -n 4h"
+    command: "-cp 0.25 -m 2"
 ```
 
 ## Reference
@@ -93,3 +89,6 @@ Idle Always Free compute instances may be reclaimed by Oracle. Oracle will deem 
 - CPU utilization for the 95th percentile is less than 20%
 - Network utilization is less than 20%
 - Memory utilization is less than 20% (applies to [A1 shapes](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm#Details_of_the_Always_Free_Compute_instance__a1_flex) only)
+
+The recommended `noidle` options above use `-cp` instead of `-c` because Oracle checks 95th percentile CPU utilization over a 7-day period.
+For A1 instances with up to 12 GiB of memory, `-m 2` plus normal OS and service memory usage is usually enough to stay above the 20% memory threshold.
