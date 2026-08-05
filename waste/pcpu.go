@@ -7,7 +7,7 @@ import (
 
 	"github.com/by275/noidle/controller"
 	"github.com/by275/noidle/internal/log"
-	"github.com/shirou/gopsutil/v3/cpu"
+	"github.com/shirou/gopsutil/v4/cpu"
 	"go.einride.tech/pid"
 	"golang.org/x/crypto/chacha20"
 )

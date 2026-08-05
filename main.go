@@ -11,7 +11,7 @@ import (
 	"github.com/by275/noidle/controller"
 	"github.com/by275/noidle/internal/log"
 	"github.com/by275/noidle/waste"
-	"github.com/shirou/gopsutil/v3/mem"
+	"github.com/shirou/gopsutil/v4/mem"
 )
 
 const Version = "0.2.3"
