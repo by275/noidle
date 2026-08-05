@@ -24,13 +24,26 @@ Command arguments:
 ./noidle -cp 0.25 -m 2
 ```
 
-For OCI Always Free A1 instances, this is the recommended baseline:
+For OCI A1 Flex instances, use the recommendation that matches the account type:
+
+| Account type | Instance size | Recommended options |
+| --- | --- | --- |
+| Free Tier | 2 OCPUs, 12 GiB RAM | `-cp 0.25 -m 2` |
+| Pay As You Go (PAYG) | 4 OCPUs, 24 GiB RAM | `-cp 0.25 -m 4` |
+
+Free Tier:
 
 ```shell
 ./noidle -cp 0.25 -m 2
 ```
 
-This targets about 25% CPU occupancy and reserves 2 GiB of memory.
+PAYG:
+
+```shell
+./noidle -cp 0.25 -m 4
+```
+
+Both recommendations target about 25% total CPU occupancy and account for normal CPU usage from the OS and other services. The memory recommendations assume that normal OS and service usage supplies the remainder needed to stay above 20%.
 `-n` is not included because periodic bandwidth tests can create unnecessary traffic.
 
 Flags:
@@ -75,6 +88,7 @@ services:
       options:
         max-size: "1024k"
         max-file: "5"
+    # Free Tier recommendation; use -m 4 for PAYG.
     command: "-cp 0.25 -m 2"
 ```
 
@@ -84,11 +98,12 @@ services:
 
 ### Reclamation of Idle Compute Instances
 
-Idle Always Free compute instances may be reclaimed by Oracle. Oracle will deem virtual machine and bare metal compute instances as idle if, during a 7-day period, the following are true:
+Idle compute instances may be reclaimed by Oracle. Oracle will deem virtual machine and bare metal compute instances as idle if, during a 7-day period, the following are true:
 
 - CPU utilization for the 95th percentile is less than 20%
 - Network utilization is less than 20%
 - Memory utilization is less than 20% (applies to [A1 shapes](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm#Details_of_the_Always_Free_Compute_instance__a1_flex) only)
 
 The recommended `noidle` options above use `-cp` instead of `-c` because Oracle checks 95th percentile CPU utilization over a 7-day period.
-For A1 instances with up to 12 GiB of memory, `-m 2` plus normal OS and service memory usage is usually enough to stay above the 20% memory threshold.
+Because `-cp` is a ratio, the same value applies to both the 2-OCPU Free Tier instance and the 4-OCPU PAYG instance.
+For memory, `-m 2` on the 12-GiB Free Tier instance and `-m 4` on the 24-GiB PAYG instance each reserve about 16.7% directly. Normal OS and service memory usage is expected to keep total utilization above the 20% threshold; increase `-m` if the instance stays below it.
