@@ -42,3 +42,12 @@ jobs:
             ${{ env.IMAGE_NAME }}:latest
           platforms: linux/arm64
           push: true
+      -
+        name: Notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          description: |
+            ${{ env.IMAGE_NAME }}:latest
