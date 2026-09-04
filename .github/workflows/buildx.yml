@@ -12,6 +12,9 @@ env:
 jobs:
   buildx:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     permissions:
       contents: read
       packages: write
@@ -42,6 +45,9 @@ jobs:
             ${{ env.IMAGE_NAME }}:latest
           platforms: linux/arm64
           push: true
+          pull: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       -
         name: Notification
         uses: sarisia/actions-status-discord@v1
